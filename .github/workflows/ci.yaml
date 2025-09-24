@@ -13,6 +13,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      - name: Get package version
+        id: package
+        run: echo "version=$(jq -r .version package.json)" >> $GITHUB_OUTPUT
+
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
@@ -40,25 +44,17 @@ jobs:
           username: alx52
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Read app version
-        id: package
-        run: echo "VERSION=$(jq -r .version package.json)" >> $GITHUB_ENV
-
       - name: Build and push Docker image
         uses: docker/build-push-action@v4
         with:
           push: true
           tags: |
-            alx52/nodejs-hello-api:${{ env.VERSION }}
+            alx52/nodejs-hello-api:${{ needs.build.outputs.version }}
             alx52/nodejs-hello-api:latest
   deploy:
     runs-on: ubuntu-latest
     needs: publish
     steps:
-      - name: Read app version
-        id: package
-        run: echo "VERSION=$(jq -r .version package.json)" >> $GITHUB_ENV
-        
       - name: Checkout charts repository
         uses: actions/checkout@v3
         with:
@@ -68,12 +64,12 @@ jobs:
 
       - name: Update Charts
         run: |
-          sed -i "s|tag: .*|tag: \"${{ env.VERSION }}\"|" charts/values/nodejs-hello-api-values.yaml
+          sed -i "s|tag: .*|tag: \"${{ needs.build.outputs.version }}\"|" charts/values/nodejs-hello-api-values.yaml
 
       - name: Commit and push changes
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add charts/values/nodejs-hello-api-values.yaml
-          git commit -m "update tag to ${{ env.VERSION }}"
+          git commit -m "update tag to ${{ needs.build.outputs.version }}"
           git push origin HEAD:develop
