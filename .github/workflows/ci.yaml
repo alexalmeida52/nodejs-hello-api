@@ -3,7 +3,7 @@ name: CI/CD NestJS
 on:
   push:
     branches:
-      - dev
+      - develop
   pull_request:
 
 jobs:
