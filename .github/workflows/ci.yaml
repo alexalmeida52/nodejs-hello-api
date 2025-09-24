@@ -55,7 +55,7 @@ jobs:
             alx52/nodejs-hello-api:latest
   deploy:
     runs-on: ubuntu-latest
-    needs: publish
+    needs: [build, publish]
     steps:
       - name: Checkout charts repository
         uses: actions/checkout@v3
