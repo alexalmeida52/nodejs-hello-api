@@ -1,8 +1,8 @@
 import { Controller, Get, Post, Put, Delete, Param, Body, NotFoundException } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { User } from './user.entity';
+import { User } from './dtos/user.response.dto';
 import { ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { UserRequestDTO } from './dtos/UserDTO';
+import { UserRequestDTO } from './dtos/user.request.dto';
 
 @ApiTags('hello')
 @Controller('users')
