@@ -61,8 +61,8 @@ describe('UsersController', () => {
     expect(() => controller.findOne('999')).toThrow('Usuário não encontrado');
   });
 
-  it('create deve adicionar um novo usuário', () => {
-    const newUser = controller.create({ name: 'New User', email: 'new@gmail.com' });
+  it('create deve adicionar um novo usuário', async () => {
+    const newUser = await controller.create({ name: 'New User', email: 'new@gmail.com' });
     expect(newUser).toBeDefined();
     expect(newUser.id).toBeDefined();
     expect(newUser.name).toBe('New User');

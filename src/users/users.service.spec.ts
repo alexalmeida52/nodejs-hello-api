@@ -1,12 +1,22 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UsersService } from './users.service';
+import { SqsService } from '../infra/sqs/sqs.service';
+
+const mockSqsService = {
+  sendJsonMessage: jest.fn(),
+  receiveMessages: jest.fn(() => Promise.resolve(["message1", "message2"])),
+  deleteMessage: jest.fn(),
+};
 
 describe('UsersService', () => {
   let service: UsersService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [UsersService],
+      providers: [
+        UsersService,
+        { provide: SqsService, useValue: mockSqsService}
+      ],
     }).compile();
 
     service = module.get<UsersService>(UsersService);
@@ -29,8 +39,8 @@ describe('UsersService', () => {
     expect(user?.id).toBe(1);
   });
 
-  it('create should add a new user', () => {
-    const newUser = service.create('John', 'john@gmail.com');
+  it('create should add a new user', async () => {
+    const newUser = await service.create('John', 'john@gmail.com');
     expect(newUser).toBeDefined();
     expect(newUser.id).toBeDefined();
     expect(newUser.name).toBe('John');

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { User } from './dtos/user.response.dto';
-import { SqsService } from 'src/infra/sqs/sqs.service';
+import { SqsService } from '../infra/sqs/sqs.service';
 
 @Injectable()
 export class UsersService {
