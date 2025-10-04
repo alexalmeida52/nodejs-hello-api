@@ -42,8 +42,9 @@ export class UsersController {
     description: 'Mensagem criada com sucesso',
     type: User
   })
-  create(@Body() body: UserRequestDTO): User {
-    return this.usersService.create(body.name, body.email);
+  async create(@Body() body: UserRequestDTO): Promise<User> {
+    const response = await this.usersService.create(body.name, body.email);
+    return response;
   }
 
   @Put(':id')
